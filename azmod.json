@@ -1,0 +1,19 @@
+{
+  "azmod": 1,
+  "id": "vdj-stems-import",
+  "name": "VirtualDJ Stems Import",
+  "version": "0.2.0",
+  "author": "ThomasDalgas",
+  "summary": "Read-only automatic USB scan for VirtualDJ stem exports with on-deck status.",
+  "description": "Automatically scans mounted USB Contents folders for VirtualDJ stem exports in a background worker. Shows complete and incomplete file sets, scan errors, an automatic-scan toggle and Scan again. USB removal or remount cancels stale results. Completeness is a file inventory, not playback readiness. Does not convert, rename, delete or write audio/library files. Only the on/off preference is saved through the core settings API.",
+  "license": "GPL-3.0-only",
+  "source": "https://github.com/ThomasDalgas/vdj-stems-import",
+  "api": 1,
+  "firmware": [
+    "any"
+  ],
+  "hooks": false,
+  "min_core": "1.2.3",
+  "category": "tools",
+  "beta": true
+}
