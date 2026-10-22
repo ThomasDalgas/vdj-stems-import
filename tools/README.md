@@ -17,8 +17,8 @@ The callback interface permits cooperative cancellation between directory entrie
 it cannot interrupt an OS filesystem call that is already blocked.
 
 JSON Lines output: schema, one record per discovered `.stems` directory, summary.
-Paths are relative to Contents. Group bits are 1 Acapella, 2 Instrumental,
-4 Melody, 8 Beat. Groups are matched case-insensitively. Apple `._` sidecars and
+Paths are relative to Contents. Group bits are 1 Vocals (VOCAL), 2 Instruments (MELODY),
+4 Bass (BASS), 8 Drums (DRUMS). Groups are matched case-insensitively. Apple `._` sidecars and
 hidden directories are ignored. Duplicate names, missing originals, empty files
 and non-regular expected files prevent `files_complete`. No guess based on title
 is used: the original is the sibling obtained by removing the `.stems` suffix.
@@ -40,3 +40,6 @@ cover the integration; hardware testing remains necessary.
 No audio fixture is committed. Tests use small synthetic files because they test
 inventory semantics, not playback. Actual USB codec evidence is documented in the
 workspace findings from 2026-10-22.
+
+Schema version 2 exposes `azmod_slots` alongside `groups`. Old overlapping VDJ
+group names do not satisfy the new four-slot inventory.

@@ -20,7 +20,7 @@ static void report(const struct vdj_set *s, void *user) {
 }
 int main(int argc, char **argv) {
     if (argc != 2) { fprintf(stderr, "Usage: vdj-scan /path/to/USB/Contents\n"); return 64; }
-    puts("{\"type\":\"schema\",\"version\":1,\"groups\":[\"Acapella\",\"Instrumental\",\"Melody\",\"Beat\"],\"codec_verified\":false}");
+    puts("{\"type\":\"schema\",\"version\":2,\"groups\":[\"Vocals\",\"Instruments\",\"Bass\",\"Drums\"],\"azmod_slots\":[\"VOCAL\",\"MELODY\",\"BASS\",\"DRUMS\"],\"codec_verified\":false}");
     struct vdj_scan_result r;
     int status=vdj_scan_contents(argv[1], report, NULL, NULL, &r);
     printf("{\"type\":\"summary\",\"scan_status\":%d,\"sets\":%u,\"complete\":%u,\"incomplete\":%u,\"errors\":%u}\n",status,r.sets,r.complete,r.incomplete,r.errors);

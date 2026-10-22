@@ -46,7 +46,7 @@ static void inspect_set(struct scan *s, int parent, const char *name, const char
     if (fd < 0) { error(s); return; }
     DIR *dir = fdopendir(fd);
     if (!dir) { close(fd); error(s); return; }
-    const char *names[] = {"Acapella.m4a", "Instrumental.m4a", "Melody.m4a", "Beat.m4a"};
+    const char *names[] = {"Vocals.m4a", "Instruments.m4a", "Bass.m4a", "Drums.m4a"};
     unsigned seen = 0;
     unsigned errors_before = s->result->errors;
     for (;;) {

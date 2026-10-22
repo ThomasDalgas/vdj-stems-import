@@ -6,7 +6,10 @@
  * Call only from a worker. Does no writes, decoding or large allocations.
  * Callback data is valid only during callback. Paths are relative to Contents.
  * The caller must not use this snapshot as authorization to write to a USB. */
-enum { VDJ_ACAPELLA, VDJ_INSTRUMENTAL, VDJ_MELODY, VDJ_BEAT, VDJ_GROUPS };
+/* Slot order matches AZ-MOD: VOCAL, MELODY, BASS, DRUMS.
+ * Files must come from vocals / instru / bass / kick+hihat respectively.
+ * Filename mapping does not validate the audio contents. */
+enum { VDJ_VOCALS, VDJ_INSTRUMENTS, VDJ_BASS, VDJ_DRUMS, VDJ_GROUPS };
 enum { VDJ_SCAN_OK, VDJ_SCAN_ERROR, VDJ_SCAN_LIMIT, VDJ_SCAN_CANCELLED };
 #define VDJ_PATH_CAP 2048
 #define VDJ_SCAN_MAX_ENTRIES 50000u
