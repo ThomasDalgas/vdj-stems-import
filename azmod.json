@@ -2,7 +2,7 @@
   "azmod": 1,
   "id": "vdj-stems-import",
   "name": "VirtualDJ Stems Import",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "author": "ThomasDalgas",
   "summary": "Read-only automatic USB scan for VirtualDJ stem exports with on-deck status.",
   "description": "Read-only USB scan for VirtualDJ exports. Maps Vocals.m4a, Instruments.m4a, Bass.m4a and Drums.m4a to VOCAL, MELODY, BASS and DRUMS. Shows complete/incomplete file sets, scan status, Auto scan and Scan again. Legacy overlapping export names are not accepted as complete. File names do not verify audio content. M4A stem playback is not enabled. Does not change audio files or playlists; only the on/off preference is saved.",

@@ -119,3 +119,8 @@ community-mods.vdj-stems-import = on
 ```
 
 Preserve any existing settings when updating this file.
+
+## Icon update (0.3.2)
+
+Adds the approved four-waveform import icon. Scanner and layout are unchanged from
+0.3.1. This replaces the SDK placeholder so automatic release packaging can pass.
