@@ -1,3 +1,4 @@
+#include "panel_icon.h"
 /* SPDX-License-Identifier: GPL-3.0-only */
 #include "azmod-mod.h"
 #include "vdj_monitor.h"
@@ -102,10 +103,18 @@ static void draw(az_draw *d,az_rect area,void *user) {
     if (state>VDJ_CANCELLED) state=VDJ_FAILED;
     az_rect box={area.x,area.y+header,area.w,row};
     char text[128];
-    snprintf(text,sizeof text,"%s | USB: %u",labels[state],volumes);
-    box_text(d,box,text,22,AZ_COL_TEXT);
+    if (state==VDJ_DISABLED) snprintf(text,sizeof text,"%s",labels[state]);
+    else snprintf(text,sizeof text,"%s | USB: %u",labels[state],volumes);
+    az_rect status_box=box;
+    if (row>=32 && box.w>=160 && AZ_HAS(C,draw_image)) {
+        if (C->draw_image(d,box.x+8,box.y+(row-32)/2,panel_icon,32,32)==0) {
+            status_box.x+=40; status_box.w-=40;
+        }
+    }
+    box_text(d,status_box,text,22,AZ_COL_TEXT);
     box.y+=row;
-    snprintf(text,sizeof text,"%u complete / %u incomplete",complete,incomplete);
+    if (state==VDJ_DISABLED) snprintf(text,sizeof text,"Enable auto scan to scan USB");
+    else snprintf(text,sizeof text,"%u complete / %u incomplete",complete,incomplete);
     box_text(d,box,text,28,AZ_COL_TEXT);
     for (int i=0;i<2;++i) {
         box.y+=row;
@@ -114,9 +123,24 @@ static void draw(az_draw *d,az_rect area,void *user) {
         int active=selected==i;
         C->fill_rect(d,button.x,button.y,button.w,button.h,
                      C->color(active ? AZ_COL_HI:AZ_COL_BG));
-        if (!i) snprintf(text,sizeof text,"Auto scan: %s",atomic_load(&enabled_flag) ? "ON":"OFF");
-        else snprintf(text,sizeof text,"Scan again");
-        box_text(d,button,text,26,active ? AZ_COL_HI_TEXT:AZ_COL_TEXT);
+        if (!i && button.w>=160 && button.h>=18) {
+            int on=atomic_load(&enabled_flag)!=0;
+            int badge_w=button.w/4; if (badge_w>72) badge_w=72;
+            az_rect label=button; label.w-=badge_w+8;
+            box_text(d,label,"Auto scan",26,active ? AZ_COL_HI_TEXT:AZ_COL_TEXT);
+            az_rect badge={button.x+button.w-badge_w-4,button.y+2,badge_w,button.h-4};
+            C->fill_rect(d,badge.x,badge.y,badge.w,badge.h,on ? 0x15803du:0x4b5563u);
+            /* White on green/gray is independent of selection and the deck theme. */
+            int px=badge.h*2/3; if (px>22) px=22;
+            const char *value=on ? "ON":"OFF";
+            while (px>8 && C->text_width(value,px)>badge.w-4) --px;
+            C->draw_text(d,badge.x+(badge.w-C->text_width(value,px))/2,
+                         badge.y+(badge.h-px*3/2)/2,value,px,0xffffffu);
+        } else {
+            if (!i) snprintf(text,sizeof text,"Auto scan: %s",atomic_load(&enabled_flag) ? "ON":"OFF");
+            else snprintf(text,sizeof text,"Scan again");
+            box_text(d,button,text,26,active ? AZ_COL_HI_TEXT:AZ_COL_TEXT);
+        }
         if (!i) toggle_hit=button; else rescan_hit=button;
     }
     box.y+=row;

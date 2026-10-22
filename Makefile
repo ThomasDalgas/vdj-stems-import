@@ -76,7 +76,7 @@ space := $(subst ,, )
 all: $(OUT)/$(MOD_ID).so
 
 ifeq ($(strip $(CXX_SRCS)),)
-$(OUT)/$(MOD_ID).so: $(SRCS) usb_watch.h vdj_scan.h vdj_monitor.h $(AZ_SDK_INCLUDE)/azmod-mod.h | $(OUT)
+$(OUT)/$(MOD_ID).so: $(SRCS) panel_icon.h usb_watch.h vdj_scan.h vdj_monitor.h $(AZ_SDK_INCLUDE)/azmod-mod.h | $(OUT)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRCS) $(LDLIBS)
 else
 OBJS := $(patsubst %,$(OUT)/obj/%.o,$(SRCS))

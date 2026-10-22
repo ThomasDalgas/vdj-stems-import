@@ -124,3 +124,11 @@ Preserve any existing settings when updating this file.
 
 Adds the approved four-waveform import icon. Scanner and layout are unchanged from
 0.3.1. This replaces the SDK placeholder so automatic release packaging can pass.
+
+## Status indicator update (0.3.3)
+
+Adds the approved icon inside the scanner panel and a green ON / gray OFF badge
+independent of the selected-row highlight. Paused scanning no longer displays a
+misleading zero USB count. Installed-list icons remain controlled by the core catalog.
+SDK host harness (plain, ASan/UBSan, TSan), ARM64 build and publishing validation passed.
+On-device visual confirmation is pending.
