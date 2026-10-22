@@ -76,36 +76,51 @@ static void *worker(void *arg) {
     }
     return NULL;
 }
-static void line(az_draw *d,az_rect area,int row,int index,const char *text) {
-    if (row<=0 || (index+1)*row>area.h || area.w<=16) return;
-    int px=row/2; if (px<8) px=8; if (px>96) px=96;
+/* Text is fitted to its box; draw_text uses a 1.5 * px line height. */
+static void box_text(az_draw *d,az_rect box,const char *text,int preferred,int role) {
+    if (box.w<=16 || box.h<12) return;
+    int px=preferred;
+    if (px>box.h*2/3) px=box.h*2/3;
+    while (px>8 && C->text_width(text,px)>box.w-16) --px;
     char out[128]; snprintf(out,sizeof out,"%s",text);
     size_t n=strlen(out);
-    while (n && C->text_width(out,px)>area.w-16) out[--n]=0;
-    if (n) C->draw_text(d,area.x+8,area.y+index*row,out,px,C->color(AZ_COL_TEXT));
+    while (n && C->text_width(out,px)>box.w-16) out[--n]=0;
+    if (n) C->draw_text(d,box.x+8,box.y+(box.h-px*3/2)/2,out,px,C->color(role));
 }
 static void draw(az_draw *d,az_rect area,void *user) {
     (void)user;
-    static const char *labels[]={"Waiting for USB","Scan disabled","Scanning VDJ files...",
-        "Scan complete","Partial scan: retrying","Cannot read USB mounts","USB changed / scan cancelled"};
+    static const char *labels[]={"Waiting for USB","Auto scan paused","Scanning...",
+        "Scan complete","Partial scan - retrying","USB read error","USB changed - scan cancelled"};
     C->draw_header(d,"VirtualDJ Stem Scan");
-    int row=C->row_height(d);
     toggle_hit=(az_rect){0}; rescan_hit=(az_rect){0};
+    int header=C->row_height(d);
+    int row=(area.h-header)/5;
+    if (header<0 || row<12 || area.w<32) return;
     uint64_t word=atomic_load(&display);
     unsigned state=word&15u,volumes=(word>>4)&15u;
     unsigned complete=(word>>8)&0xfffffu,incomplete=(word>>28)&0xfffffu;
     if (state>VDJ_CANCELLED) state=VDJ_FAILED;
+    az_rect box={area.x,area.y+header,area.w,row};
     char text[128];
-    snprintf(text,sizeof text,"%s | %u complete, %u incomplete",labels[state],complete,incomplete);
-    line(d,area,row,1,text);
-    snprintf(text,sizeof text,"%s Auto scan: %s",selected==0 ? ">":" ",atomic_load(&enabled_flag) ? "ON":"OFF");
-    line(d,area,row,2,text);
-    line(d,area,row,3,selected==1 ? "> Scan again":"  Scan again");
-    snprintf(text,sizeof text,"%u USB volumes | %u complete | %u incomplete",volumes,complete,incomplete);
-    line(d,area,row,4,text);
-    line(d,area,row,5,"Files only: M4A playback support pending");
-    if (row>0 && area.h>=3*row) toggle_hit=(az_rect){area.x,area.y+2*row,area.w,row};
-    if (row>0 && area.h>=4*row) rescan_hit=(az_rect){area.x,area.y+3*row,area.w,row};
+    snprintf(text,sizeof text,"%s | USB: %u",labels[state],volumes);
+    box_text(d,box,text,22,AZ_COL_TEXT);
+    box.y+=row;
+    snprintf(text,sizeof text,"%u complete / %u incomplete",complete,incomplete);
+    box_text(d,box,text,28,AZ_COL_TEXT);
+    for (int i=0;i<2;++i) {
+        box.y+=row;
+        az_rect button={box.x+4,box.y+2,box.w-8,box.h-4};
+        if (button.h<12) continue;
+        int active=selected==i;
+        C->fill_rect(d,button.x,button.y,button.w,button.h,
+                     C->color(active ? AZ_COL_HI:AZ_COL_BG));
+        if (!i) snprintf(text,sizeof text,"Auto scan: %s",atomic_load(&enabled_flag) ? "ON":"OFF");
+        else snprintf(text,sizeof text,"Scan again");
+        box_text(d,button,text,26,active ? AZ_COL_HI_TEXT:AZ_COL_TEXT);
+        if (!i) toggle_hit=button; else rescan_hit=button;
+    }
+    box.y+=row;
+    box_text(d,box,"Scanner only - playback pending",18,AZ_COL_TEXT);
 }
 static int contains(az_rect r,int x,int y) { return r.w>0 && r.h>0 && x>=r.x && x<r.x+r.w && y>=r.y && y<r.y+r.h; }
 static int input(const az_event *ev,void *user) {

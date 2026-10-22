@@ -102,3 +102,20 @@ Melody/Beat sets remain incomplete; Instrumental is deliberately not an alias fo
 Instruments because it contains overlapping audio. No audio is decoded or injected
 into AZ-MOD: this is inventory mapping, and actual M4A playback remains pending.
 CLI JSON schema is now version 2 and includes parallel groups/azmod_slots arrays.
+
+## Readability update (0.3.1)
+
+Larger result counts, separate status and controls, theme-aware selected buttons,
+and touch targets matching the visible buttons. Text fits the available panel.
+The v0.3.0 scanner was confirmed on an XDJ-AZ with seven complete sets; the new
+layout still needs on-device visual confirmation.
+
+When creating `MODS/azmods.cfg`, include the required settings header:
+
+```ini
+version = 1
+community-mods = on
+community-mods.vdj-stems-import = on
+```
+
+Preserve any existing settings when updating this file.
